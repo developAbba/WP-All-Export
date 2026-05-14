@@ -73,9 +73,15 @@ class PMXE_Model_List extends PMXE_Model {
 			$sql .= " GROUP BY $groupBy";
 		}
 		is_null($orderBy) and $orderBy = implode(', ', $this->primary); // default sort order is by primary key
-		$sql .= " ORDER BY $orderBy";
-		if ($page > 0) {
-			$sql = "SELECT SQL_CALC_FOUND_ROWS $this->what $sql LIMIT " . intval(($page - 1) * $perPage) . ", " . intval($perPage);
+	$sql .= " ORDER BY $orderBy";
+	$columns = explode(',', $this->what);
+	foreach ($columns as $column) {
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', trim($column))) {
+			throw new Exception('Invalid input');
+		}
+	}
+	if ($page > 0) {
+		$sql = "SELECT SQL_CALC_FOUND_ROWS $this->what $sql LIMIT " . intval(($page - 1) * $perPage) . ", " . intval($perPage);
 		} else {
 			$sql = "SELECT $this->what $sql";
 		}
