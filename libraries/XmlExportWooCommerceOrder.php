@@ -282,7 +282,7 @@ if ( ! class_exists('XmlExportWooCommerceOrder') ){
 			$table_prefix = $wpdb->prefix;		
 
 			$rate_details = null;
-			$meta_data = $wpdb->get_results("SELECT * FROM {$table_prefix}woocommerce_order_itemmeta WHERE order_item_id = {$order_item_id}", ARRAY_A);			
+			$meta_data = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$table_prefix}woocommerce_order_itemmeta WHERE order_item_id = %d", $order_item_id), ARRAY_A);
 			foreach ($meta_data as $meta) {
 				if ($meta['meta_key'] == 'rate_id'){
 					$rate_id = $meta['meta_value'];														
