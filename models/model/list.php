@@ -64,15 +64,30 @@ class PMXE_Model_List extends PMXE_Model {
 		! is_null($perPage) or $perPage = 20; // set default value for page length
 		$page = intval($page);
 		
+		if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->table)) {
+			throw new Exception('Invalid input');
+		}
 		$sql = "FROM $this->table ";
 		$sql .= implode(' ', $this->joined);
 		if ( ! is_null($field)) {
 			$sql .= " WHERE " . $this->buildWhere($field, $value);
 		}
 		if ( ! is_null($groupBy)) {
+			$groupByColumns = explode(',', $groupBy);
+			foreach ($groupByColumns as $groupByColumn) {
+				if (!preg_match('/^[a-zA-Z0-9_]+$/', trim($groupByColumn))) {
+					throw new Exception('Invalid input');
+				}
+			}
 			$sql .= " GROUP BY $groupBy";
 		}
 		is_null($orderBy) and $orderBy = implode(', ', $this->primary); // default sort order is by primary key
+		$orderByColumns = explode(',', $orderBy);
+		foreach ($orderByColumns as $orderByColumn) {
+			if (!preg_match('/^[a-zA-Z0-9_]+$/', trim($orderByColumn))) {
+				throw new Exception('Invalid input');
+			}
+		}
 	$sql .= " ORDER BY $orderBy";
 	$columns = explode(',', $this->what);
 	foreach ($columns as $column) {
